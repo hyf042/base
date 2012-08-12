@@ -12,6 +12,7 @@
 
 #include "Type.h"
 #include "Exception.h"
+#include "String.h"
 
 #include <cstdarg>
 #include <cstdio>
@@ -37,19 +38,18 @@ namespace Base
 		}
 	}
 
-	static base_string FormatString(const char* format, ...)
-	{
-		va_list arg;
-		char buffer[1024] = {0};
-
-		va_start(arg, format);
-		vsprintf(buffer, format, arg);
-		va_end(arg);
-
-		return base_string(buffer);
-	}
+	// defines
+	
+	// prevent multi macro spread 
+	#define BASE_JOIN(x, y) BASE_DO_JOIN(x, y)
+	#define BASE_DO_JOIN(x, y) BASE_DO_JOIN_2(x, y)
+	#define BASE_DO_JOIN_2(x, y) x##y
+	
+	#define BASE_UNIQUE_NAME(name)\
+		BASE_JOIN(name, __LINE__)
 
 	#define base_assert assert
+
 }
 
 #endif

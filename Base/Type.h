@@ -49,7 +49,7 @@ namespace Base
 	 */
 	typedef std::string base_string;
 	typedef std::wstring base_wstring;
-
+	typedef wchar_t wchar;
 }
 
 #endif
