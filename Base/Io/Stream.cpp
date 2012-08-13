@@ -39,13 +39,22 @@ namespace Base
 	{
 		if(mFile != NULL)
 			close();
+		if((Io_write&flag)==0&&(Io_read&flag)==0)
+			flag |= Io_read;
 
 		this->mNocache = (flag&Io_nocache)>0;
 		this->mCanwrite = (flag&Io_write)>0;
+		this->mCanread = (flag&Io_read)>0;
 #ifndef BASE_OS_WINDOWS
-		mFile = fopen(filename.ansi_str(), mCanwrite ? ((flag&Io_append)>0 ? "a+b" : "r+b") : "rb");
+		if(mCanread)
+			mFile = fopen(filename.ansi_str(), mCanwrite ? ((flag&Io_append)>0 ? L"a+b" : L"r+b") : L"rb");
+		else
+			mFile = fopen(filename.ansi_str(), mCanwrite ? ((flag&Io_append)>0 ? L"ab" : L"wb") : L"");
 #else
-		mFile = _wfopen(filename.unicode_str(), mCanwrite ? ((flag&Io_append)>0 ? L"a+b" : L"r+b") : L"rb");
+		if(mCanread)
+			mFile = _wfopen(filename.unicode_str(), mCanwrite ? ((flag&Io_append)>0 ? L"a+b" : L"r+b") : L"rb");
+		else
+			mFile = _wfopen(filename.unicode_str(), mCanwrite ? ((flag&Io_append)>0 ? L"ab" : L"wb") : L"");
 #endif
 		if(mFile == NULL) 
 		{

@@ -1,17 +1,12 @@
 ﻿#include <iostream>
+#include <vector>
 #include "Base/Logger.h"
-#include "Base/Timer.h"
-#include "Base/Thread/Queue.h"
-#include "Base/String.h"
-#include "Base/Io/FileUtility.h"
-#include "Base/Io/Stream.h"
 using namespace std;
-
-// Global Logger
-
-//typedef Base::Singleton<Base::Logger> LOGGER;
 
 int main(void)
 {
+	BASE_LOGGER.log("jhehe");
+	BASE_LOGGER.log("jgaga");
+	BASE_LOGGER.log("jhehe你好");
 	return 0;
 }

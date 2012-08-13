@@ -16,7 +16,6 @@ namespace Base
 {
 	class Stream;
 	typedef std::vector<byte> BinaryArray;
-	typedef Stream* StreamPtr;
 
 	enum IoFlag
 	{
@@ -65,6 +64,8 @@ namespace Base
 		size_t readAny(T &data) {return read((binary)(&data),sizeof(T));}
 		template<typename T>
 		size_t writeAny(const T &data) {return write((const binary)(&data),sizeof(T));}
+		template<>
+		size_t writeAny(const String &data);
 
 		virtual size_t pos() const = 0;
 		virtual size_t size() const = 0;
@@ -79,17 +80,23 @@ namespace Base
 		BASE_REGISTER_CLASS_NAME(Stream);
 	};
 
+	template<>
+	size_t Stream::writeAny(const String &data)
+	{
+		std::string str = data.asUTF8();
+		return write((binary)str.c_str(),str.size());
+	}
+
 	class FileStream : public Stream
 	{
 	public:
-		FileStream():mFile(0),mCanwrite(false),mNocache(false) {}
-		FileStream(const String &filename, uint32 flag = 0):mFile(0){open(filename,flag);}
-		virtual ~FileStream() {
-			close();}
+		FileStream():mFile(0),mCanwrite(false),mNocache(false),mCanread(false) {}
+		FileStream(const String &filename, uint32 flag = Io_read):mFile(0){open(filename,flag);}
+		virtual ~FileStream() {close();}
 		virtual bool open(const String &filename, uint32 flag = 0);
 		BASE_STREAM_SUPPORT_OPERATOR(FileStream);
 
-		bool canRead() const {return true;}
+		bool canRead() const {return mCanread;}
 		bool canWrite() const {return mCanwrite;}
 		bool canSeek() const {return true;}
 
@@ -111,6 +118,7 @@ namespace Base
 	private:
 		bool mNocache;
 		bool mCanwrite;
+		bool mCanread;
 		FILE *mFile;
 	};
 
