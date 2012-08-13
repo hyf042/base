@@ -15,6 +15,7 @@
 #include "StringConv.h"
 
 #include <vector>
+#include <sstream>
 
 namespace Base
 {
@@ -23,7 +24,6 @@ namespace Base
 	
 	class String
 	{
-		base_wstring mContent;
 	public:
 		typedef int32 IndexVar;
 		static const IndexVar npos;
@@ -44,9 +44,8 @@ namespace Base
 		String(wchar c) {
 			mContent += c;
 		}
-		String(int32 value) {*this=itos(value);}
-		String(double value, size_t precise = 6) {*this=rtos(value,precise);}
-		String(bool value) {mContent=value?L"true":L"false";}
+		template<typename T>
+		String(T value) {*this=any2string(value);}
 		~String() {}
 
 		String substr(IndexVar index, IndexVar len) const{
@@ -105,23 +104,42 @@ namespace Base
 			ret *= b;
 			return ret;
 		}
+		operator base_string() {
+			return asAnsi();
+		}
+		operator base_wstring() {
+			return asUnicode();
+		}
 
 		//utility funcs
 		bool isInt() const;
 		bool isReal() const;
 		bool isNumber() const {return isReal()|isInt();}
-		int32 asInt() const {return stoi(*this);}
-		double asReal() const {return stor(*this);}
+		template<typename T>
+		T as() const {return string2any<T>(*this);}
 		base_string asAnsi() const{return ws2s(mContent);}
 		base_string asUTF8() const{return ws2utf8(mContent);}
 		base_wstring asUnicode() const{return mContent;}
-		const char* c_str() const{static base_string tmp; tmp = ws2s(mContent); return tmp.c_str();}
-		const wchar* c_wstr() const{return mContent.c_str();}
-		static String itos(int value);
-		static int stoi(const String &s);
-		static String rtos(double value, size_t precise = 6);
-		static double stor(const String &s);
+		const char* ansi_str() const{static base_string tmp; tmp = ws2s(mContent); return tmp.c_str();}
+		const wchar* unicode_str() const{return mContent.c_str();}
+		template<typename T>
+		static String any2string(T tmp) {
+			std::stringstream ss;
+			ss << tmp;
+			return ss.str();
+		}
+		template<typename T>
+		static T string2any(const String &s) {
+			T tmp;
+			std::stringstream ss;
+			ss << s.c_str();
+			ss >> tmp;
+			return tmp;
+		}
 		static String format(const char* fmt, ...);
+
+	private:
+		base_wstring mContent;
 	};
 }
 

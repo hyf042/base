@@ -7,6 +7,7 @@
  *  Define types that is needed
  ****************************************************/
 
+#include <cstdlib>
 #include <string>
 #include "Platform.h"
 
@@ -43,7 +44,10 @@ namespace Base
 	typedef unsigned int		dword;
 	typedef unsigned long long	qword;
 	typedef unsigned int		size;
-
+	typedef uint8*				binary;
+	
+	#define base_malloc malloc
+	
 	/*
 	 * String
 	 */

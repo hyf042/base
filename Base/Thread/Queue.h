@@ -64,7 +64,7 @@ namespace Base
 				return true;
 			}
 
-			size_t size() const {
+			size_t size() {
 				BASE_MUTEX_GUARD(mMutex);
 				return mQueue.size();
 			}

@@ -48,6 +48,10 @@ namespace Base
 	#define BASE_UNIQUE_NAME(name)\
 		BASE_JOIN(name, __LINE__)
 
+	#define BASE_REGISTER_CLASS_NAME(_name)\
+		virtual std::string getName() {return #_name;} \
+		static std::string name() {return #_name;}
+
 	#define base_assert assert
 
 }
