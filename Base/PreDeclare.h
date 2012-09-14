@@ -13,6 +13,14 @@
 
 namespace Base
 {
+	class Exception;
+	
+	class Logger;
+	
+	class String;
+	
+	class Timer;
+
 	class Stream;
 	typedef SharedPtr<Stream> StreamPtr;
 }
