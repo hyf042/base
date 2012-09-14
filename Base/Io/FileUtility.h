@@ -40,7 +40,7 @@ namespace Base
 			size = file.size();
 			file.seek(0,Seek_begin);
 
-			binary data = reinterpret_cast<binary>(sizeof(byte)*size);
+			binary data = reinterpret_cast<binary>(base_malloc(sizeof(byte)*size));
 			file.read(data,size);
 			return data;
 		}
