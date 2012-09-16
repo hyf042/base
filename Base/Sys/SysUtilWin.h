@@ -123,6 +123,58 @@ namespace Base
 		}
 	};
 
+	class DirectoryIteratorImpl {
+	public:
+		DirectoryIteratorImpl(const String& path) {
+            String findPath = path + "/*";
+			mPath = path;
+            
+            mFH = FindFirstFileW(findPath.unicode_str(), &mFD);
+            if(mFH == INVALID_HANDLE_VALUE) {
+				DWORD error = GetLastError();
+                if(error != ERROR_NO_MORE_FILES) {
+                    BASE_THROW_EXCEPTION("DirectoryEnum error : "+error);
+                }
+            } else {
+                mCurrent = mFD.cFileName;
+				mIsFolder = (mFD.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)>0;
+
+                if(mCurrent == "." || mCurrent == "..")
+                    next();
+            }
+        }
+        
+        ~DirectoryIteratorImpl() {
+            if(mFH != INVALID_HANDLE_VALUE)
+                FindClose(mFH);
+        }
+        
+        const String& get() const {
+			return mCurrent;
+		}
+        const String& next() {
+            do {
+                if(FindNextFileW(mFH, &mFD) != 0) {
+                    mCurrent = mFD.cFileName;
+					mIsFolder = (mFD.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)>0;
+                } else 
+                    mCurrent.clear();
+            }
+            while(mCurrent == "." || mCurrent == "..");
+            
+            return mCurrent;
+        }
+
+		String path() const {return mPath;}
+		bool isFolder() const {return mIsFolder;}
+        
+    private:
+        HANDLE mFH;
+        WIN32_FIND_DATAW mFD;
+        String mCurrent, mPath;
+		bool mIsFolder;
+    };
+
 	// win mutex
 	class MutexImpl : public Uncopyable
 	{
