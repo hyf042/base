@@ -1,12 +1,15 @@
 ﻿#include <iostream>
 #include <vector>
 #include "Base/Logger.h"
+#include "Base/Io/Path.h"
 using namespace std;
+
+using namespace Base;
 
 int main(void)
 {
-	BASE_LOGGER.log("jhehe");
-	BASE_LOGGER.log("jgaga");
-	BASE_LOGGER.log("jhehe你好");
+	Path::SetCurrentPath("D:/");
+	Path tmp = Path::CombinePath("haha\\","/nihao/hehe");
+	cout << Path::CheckHasEntension(Path::GetFullPath(tmp)) << endl;
 	return 0;
 }

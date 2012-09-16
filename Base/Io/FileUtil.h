@@ -1,5 +1,5 @@
 /****************************************************
- *  FileUtilityWin
+ *  FileUtil.h
  *
  *  Created by tempbuffer on 8/12/12.
  *  Copyright 2012 tempbuffer. All rights reserved.
@@ -7,22 +7,20 @@
  *  A bunch of funs that deal with files
  ****************************************************/
 
-#if !defined(_FILE_UTILITY_IMPL_H_) && defined(BASE_OS_WINDOWS)
-#define _FILE_UTILITY_IMPL_H_
+#ifndef _BASE_IO_UTIL_H_
+#define _BASE_IO_UTIL_H_
 
 #include "../Common.h"
-
-#include <Shlwapi.h>
-#pragma comment(lib,"shlwapi.lib")
+#include "Stream.h"
 
 namespace Base
 {
-	class FileUtilityImpl
+	class FileUtil
 	{
 	public:
-		static bool exist(const String& filepath) {
-			return PathFileExistsW(filepath.unicode_str())?true:false;
-		}
+		static bool FileExist(const String &path);
+		static bool PathExist(const String &path);
+		static void* ReadRawData(const String& filepath, size_t &size);
 	};
 }
 
