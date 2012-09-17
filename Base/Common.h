@@ -14,6 +14,8 @@
 #include "Exception.h"
 #include "Ptr.h"
 #include "PreDeclare.h"
+#include "PreDefine.h"
+#include "TypeTraits.h"
 #include "String.h"
 #include "Sys/sys.h"
 
@@ -40,20 +42,6 @@ namespace Base
 			ptr.second = 0;
 		}
 	}
-
-	// defines
-	
-	// prevent multi macro spread 
-	#define BASE_JOIN(x, y) BASE_DO_JOIN(x, y)
-	#define BASE_DO_JOIN(x, y) BASE_DO_JOIN_2(x, y)
-	#define BASE_DO_JOIN_2(x, y) x##y
-	
-	#define BASE_UNIQUE_NAME(name)\
-		BASE_JOIN(name, __LINE__)
-
-	#define BASE_REGISTER_CLASS_NAME(_name)\
-		virtual std::string getName() {return #_name;} \
-		static std::string name() {return #_name;}
 }
 
 #endif

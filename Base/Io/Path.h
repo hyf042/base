@@ -12,6 +12,7 @@
 
 #include "../Common.h"
 #include "Stream.h"
+#include "FileUtil.h"
 
 namespace Base
 {
