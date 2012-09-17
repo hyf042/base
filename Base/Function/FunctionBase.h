@@ -14,7 +14,7 @@
 
 namespace Base
 {
-	namespace function {
+	namespace function_detial {
 		union any_ptr {
 			void *value;
 

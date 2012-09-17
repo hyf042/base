@@ -14,7 +14,7 @@ namespace Base {
 
 #ifdef BASE_FUNCTION_NUM_ARGS
 
-	namespace function {
+	namespace function_detial {
 
 #define BASE_FUNCTION_TEMPLATE_PARAM BASE_ENUM_PARAMS(BASE_FUNCTION_NUM_ARGS, typename T)
 #define BASE_FUNCTION_TEMPLATE_ARGS BASE_ENUM_PARAMS(BASE_FUNCTION_NUM_ARGS, T)

@@ -3,8 +3,6 @@
 #include "Base/Base.h"
 using namespace std;
 
-using namespace Base;
-
 struct A
 {
 public:
@@ -29,7 +27,7 @@ public:
 int main(void)
 {
 	A a;
-	Base::function::Function<void(int)> tmp = Base::function::MakeFunction(&A::haha,&a);
+	Base::Function<void(int)> tmp = Base::MakeFunction(&A::haha,&a);
 	tmp(5);
 	tmp = haha2;
 	tmp(5);

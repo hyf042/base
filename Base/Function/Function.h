@@ -15,4 +15,12 @@
 #include "FunctionBase.h"
 #include "FunctionInclude.h"
 
+namespace Base
+{
+	using function_detial::MemFunc;
+	using function_detial::Binded;
+	using function_detial::Function;
+	using function_detial::Bind;
+	using function_detial::MakeFunction;
+}
 #endif
