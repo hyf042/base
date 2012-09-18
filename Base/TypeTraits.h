@@ -13,6 +13,11 @@
 namespace Base
 {
 	namespace Traits {
+		struct Unusable {
+			Unusable() {}
+			template<typename T> Unusable(const T&) {}
+		};
+
 		template<bool cont, typename T1, typename T2>
 		struct if_selector {
 			typedef T1 type;
@@ -21,6 +26,16 @@ namespace Base
 		template<typename T1, typename T2>
 		struct if_selector<false, T1, T2> {
 			typedef T2 type;
+		};
+
+		template<typename T>
+		struct normalize_void {
+			typedef T type;
+		};
+		
+		template<>
+		struct normalize_void<void> {
+			typedef Unusable type;
 		};
 
 		template<typename T>

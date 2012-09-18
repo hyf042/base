@@ -14,7 +14,9 @@
 
 namespace Base
 {
-	// posix mutex
+	/*********************************************
+	 * MutexImpol
+	 *********************************************/
 	class MutexImpl : public Uncopyable
 	{
 	protected:
@@ -35,6 +37,70 @@ namespace Base
 
 	private:
 		pthread_mutex_t mutex;
+	};
+
+	/*********************************************
+	 * ThreadImpl
+	 *********************************************/
+	class ThreadImpl: Uncopyable {
+	protected:
+		ThreadImpl():
+			 mActive(false),mThread(0) {
+			 }
+			 ~ThreadImpl() {
+				 clear();
+			 }
+			 void clear() {
+				 if(mThread==0)
+					 return;
+				 if(mActive)
+					 exit();
+				 mActive = false;
+				 mThread = 0;
+			 }
+			 bool start() {
+				 if(mActive)
+					 return false;
+
+				 int32 result = pthread_create(&mThread, NULL, ThreadImpl::entry, this);
+				 return (result>0);
+			 }
+			 inline bool active() const {return mActive;}
+
+			 inline void wait() {
+				 if(mActive) {
+					 pthread_join(mThread, 0);
+					 setActive(false);
+				 }
+			 }
+
+			 inline void exit() {
+				 if(active) {
+					 pthread_exit(&mThread);
+					 setActive(false);
+				 }
+			 }
+
+			 virtual void callback() = 0;
+
+	private:
+		void setActive(bool active) {
+			mActive = active;
+		}
+
+		static void* entry(void* pthis) {
+			ThreadImpl *impl = static_cast<ThreadImpl*>(pthis);
+			if(impl) {
+				impl->callback();
+
+				impl->setActive(false);
+			}
+			return 0;
+		}
+	private:
+		pthread_t mThread;
+
+		bool mActive;
 	};
 }
 

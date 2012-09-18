@@ -22,5 +22,7 @@ namespace Base
 	using function_detial::Function;
 	using function_detial::Bind;
 	using function_detial::MakeFunction;
+
+	typedef Function<void()> function;
 }
 #endif

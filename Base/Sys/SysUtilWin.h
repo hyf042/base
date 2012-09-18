@@ -13,11 +13,15 @@
 #include "../Common.h"
 #include "../Uncopyable.h"
 
+#include <Process.h>
 #include <Shlwapi.h>
 #pragma comment(lib,"shlwapi.lib")
 
 namespace Base
 {
+	/*********************************************
+	 * FileUtilImpl
+	 *********************************************/
 	class FileSystemUtilImpl
 	{
 	public:
@@ -123,6 +127,9 @@ namespace Base
 		}
 	};
 
+	/*********************************************
+	 * DirectoryImpl
+	 *********************************************/
 	class DirectoryIteratorImpl {
 	public:
 		DirectoryIteratorImpl(const String& path) {
@@ -175,7 +182,9 @@ namespace Base
 		bool mIsFolder;
     };
 
-	// win mutex
+	/*********************************************
+	 * MutexImpol
+	 *********************************************/
 	class MutexImpl : public Uncopyable
 	{
 	protected:
@@ -194,6 +203,81 @@ namespace Base
 
 	private:
 		HANDLE mutex;
+	};
+
+	/*********************************************
+	 * ThreadImpl
+	 *********************************************/
+	class ThreadImpl : public Uncopyable
+	{
+	protected:
+		ThreadImpl()
+			:mActive(false),mThreadHandle(0),mThreadID(0) {
+
+		}
+		~ThreadImpl() {
+			clear();
+		}
+		void clear() {
+			if(mThreadHandle == 0)
+				return;
+			if(mActive)
+				exit();
+			mActive = false;
+			mThreadID = 0;
+			CloseHandle(mThreadHandle);
+			mThreadHandle = 0;			
+		}
+		bool start() {
+			if(mActive)
+				return false;
+
+			setActive(true);
+			mThreadHandle = (HANDLE)_beginthreadex(
+				NULL,
+				0,
+				&_ThreadProc,
+				this,
+				0,
+				&mThreadID);
+
+			if(mThreadHandle == INVALID_HANDLE_VALUE || mThreadID == 0) {
+				setActive(false);
+				mThreadID = 0;
+				return false;
+			}
+
+			return true;
+		}
+		inline bool active() const {return mActive;}
+		inline void wait() {
+			WaitForSingleObject(mThreadHandle, INFINITE);
+			setActive(false);
+		}
+		inline void exit() {
+			TerminateThread(mThreadHandle, 0);
+			setActive(false);
+		}
+
+		virtual void callback() = 0;
+	
+	private:
+		void setActive(bool active) {
+			mActive = active;
+		}
+		static uint32 WINAPI _ThreadProc(LPVOID param) {
+			ThreadImpl *impl = static_cast<ThreadImpl*>(param);
+			if(impl) {
+				impl->callback();
+
+				impl->setActive(false);
+			}
+			return 0;
+		}
+	private:
+		volatile bool mActive;
+		HANDLE mThreadHandle;
+		uint32 mThreadID;
 	};
 }
 

@@ -3,35 +3,18 @@
 #include "Base/Base.h"
 using namespace std;
 
-struct A
-{
-public:
-	void haha(int index)
-	{
-		cout << index << endl;
-	}
-};
-
-void haha2(int index) {
-	cout << index*2 << endl;
+Base::String haha(int haha, int hehe) {
+	for(int i = 0; i < 100; i++)
+		cout << haha*hehe << endl;
+	return "hehe";
 }
-
-class haha3
-{
-public:
-	void operator()(int index) {
-		cout << index*3 << endl;
-	}
-};
 
 int main(void)
 {
-	A a;
-	Base::Function<void(int)> tmp = Base::MakeFunction(&A::haha,&a);
-	tmp(5);
-	tmp = haha2;
-	tmp(5);
-	tmp = haha3();
-	tmp(5);
+	Base::Thread<Base::String(int,int)> test = haha;
+	Base::Thread<Base::String(int,int)> test2 = haha;
+	test(1,2);
+	test2(5,10);
+	while(test||test2);
 	return 0;
 }

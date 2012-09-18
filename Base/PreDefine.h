@@ -65,7 +65,7 @@ namespace Base
 	#define BASE_IF(cond, t, f) BASE_IIF(BASE_BOOL_N(cond), t, f)
 
 	#define BASE_COMMA_IF(n) BASE_IF(n, BASE_EMPTY, BASE_COMMA)()
-
+	
 	#define BASE_FUNCTION_MERGE_PARAM(n, d) BASE_COMMA_IF(n) d ## n
 
 	#define BASE_REPEAT_1_0(m, d)

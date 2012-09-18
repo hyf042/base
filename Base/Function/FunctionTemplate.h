@@ -15,13 +15,6 @@ namespace Base {
 #ifdef BASE_FUNCTION_NUM_ARGS
 
 	namespace function_detial {
-
-#define BASE_FUNCTION_TEMPLATE_PARAM BASE_ENUM_PARAMS(BASE_FUNCTION_NUM_ARGS, typename T)
-#define BASE_FUNCTION_TEMPLATE_ARGS BASE_ENUM_PARAMS(BASE_FUNCTION_NUM_ARGS, T)
-#define BASE_FUNCTION_PARAM(n, d) BASE_JOIN(T, n) BASE_JOIN(a, n)
-#define BASE_FUNCTION_PARAMS BASE_ENUM_N(BASE_FUNCTION_NUM_ARGS, BASE_FUNCTION_PARAM, BASE_EMPTY)
-#define BASE_FUNCTION_ARGS BASE_ENUM_PARAMS(BASE_FUNCTION_NUM_ARGS, a)
-
 #define BASE_FUNCTION BASE_JOIN(Function, BASE_FUNCTION_NUM_ARGS)
 #define BASE_INVOKER BASE_JOIN(invoker, BASE_FUNCTION_NUM_ARGS)
 #define BASE_OBJ_INVOKER BASE_JOIN(obj_invoker, BASE_FUNCTION_NUM_ARGS)
@@ -142,6 +135,7 @@ namespace Base {
 			typedef R result_type;
 			typedef result_type (*invoker_type)(any_ptr BASE_FUNCTION_COMMA BASE_FUNCTION_TEMPLATE_PARAM);
 			typedef void (*releaser_type)(any_ptr);
+			static const int ARG_NUM = BASE_FUNCTION_NUM_ARGS;
 
 			template<typename Functor>
 			BASE_FUNCTION(const Functor& functor):
@@ -159,6 +153,19 @@ namespace Base {
 
 			virtual ~BASE_FUNCTION() {
 				clear();
+			}
+
+			void setArg(BASE_FUNCTION_PARAMS) {
+				#define BASE_ARGUMENT_MERGE(n,d) d##[##n##]=a##n;
+				#define BASE_ENUM_ARGUMENT_ASSIGNMENT(n) BASE_REPEAT_N(n,BASE_ARGUMENT_MERGE,mArg)
+				mArg = AnyArray(BASE_FUNCTION_NUM_ARGS);
+				//for(int i = 0; i < BASE_FUNCTION_NUM_ARGS; i++)
+				//	mArguments[i] = BASE_JOIN(a,);
+				BASE_ENUM_ARGUMENT_ASSIGNMENT(BASE_FUNCTION_NUM_ARGS)
+				//BASE_ARGUMENT_MERGE(0,mArguments)
+
+				#undef BASE_ARGUMENT_MERGE
+				#undef BASE_ENUM_ARGUMENT_ASSIGNMENT
 			}
 
 			void clear() {
@@ -187,9 +194,23 @@ namespace Base {
 			}
 
 			inline R operator()(BASE_FUNCTION_PARAMS) const {
+				invoke();
+			}
+
+			inline R invoke(BASE_FUNCTION_PARAMS) const {
 				assert(mInvoker);
 
 				return mInvoker(mPtr BASE_FUNCTION_COMMA BASE_FUNCTION_ARGS);
+			}
+
+			inline R invokeWithArg() const {
+				assert(mInvoker);
+
+#define BASE_ARGUMENT_EXTRACT(n,d) BASE_COMMA_IF(n) (d##[##n##].as<T##n>())
+#define BASE_ENUM_ARGUMENT_EXTRACT(n) BASE_REPEAT_N(n,BASE_ARGUMENT_EXTRACT,mArg)
+				return mInvoker(mPtr BASE_FUNCTION_COMMA BASE_ENUM_ARGUMENT_EXTRACT(BASE_FUNCTION_NUM_ARGS));
+#undef BASE_ENUM_ARGUMENT_EXTRACT
+#undef BASE_ARGUMENT_EXTRACT
 			}
 
 			operator bool() const {
@@ -233,6 +254,7 @@ namespace Base {
 					this->mReleaser = rhs.mReleaser;
 					this->mRefCount = rhs.mRefCount;
 					this->mPtr = rhs.mPtr;
+					this->mArg = rhs.mArg;
 
 					if(mRefCount)
 						++*mRefCount;
@@ -264,17 +286,18 @@ namespace Base {
 
 			template<typename Functor>
 			void assign(Functor f, member_ptr_tag tag) {
-				//MakeMemFunc(f);
-				assign(MakeMemFunc(f), function_obj_tag());
+				BASE_THROW_EXCEPTION("Can not use a single member function to create function, since you can't invoke it");
+				//assign(MakeMemFunc(f), function_obj_tag());
 			}
 
 			template<typename Functor>
 			void assign(Functor f, function_obj_ref_tag tag) {
-				//
+				// FuncObj& will tag to obj_tag, what's the reason?
 			}
 
 		protected:
 			any_ptr mPtr;
+			AnyArray mArg;
 			invoker_type mInvoker;
 			releaser_type mReleaser;
 			int* mRefCount;
@@ -364,11 +387,6 @@ namespace Base {
 #undef BASE_GET_OBJ_INVOKER
 #undef BASE_FUNCTOR_RELEASE
 #undef BASE_GET_FUNCTOR_RELEASE
-#undef BASE_FUNCTION_TEMPLATE_ARGS
-#undef BASE_FUNCTION_PARAM
-#undef BASE_FUNCTION_PARAMS
-#undef BASE_FUNCTION_ARGS
-#undef BASE_FUNCTION_TEMPLATE_PARAM
 #undef BASE_FUNCTION_COMMA
 	}
 

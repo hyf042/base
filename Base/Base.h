@@ -17,6 +17,7 @@
 #include "Io/Path.h"
 #include "Thread/Mutex.h"
 #include "Thread/Queue.h"
+#include "Thread/Thread.h"
 #include "Function/Function.h"
 
 #endif
