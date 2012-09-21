@@ -21,6 +21,7 @@ namespace Base
 			void *obj_ptr;
 			const void* const_obj_ptr;
 			void (*func_ptr);
+			
 			char data;
 		};
 

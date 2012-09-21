@@ -16,6 +16,8 @@
 #include "PreDeclare.h"
 #include "PreDefine.h"
 #include "TypeTraits.h"
+#include "Math.h"
+#include "Random.h"
 #include "String.h"
 #include "Any.h"
 #include "Sys/sys.h"
