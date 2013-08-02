@@ -24,9 +24,9 @@ namespace Base
 		}
 		return "./";
 	}
-	Path Path::GetApplicationPath() {
+	Path Path::GetApplicationPath(bool full) {
 #ifndef BASE_UNSUPPORTED_SYS
-		return FileSystemUtilImpl::GetApplicationPath();
+		return FileSystemUtilImpl::GetApplicationPath(full);
 #endif
 		return "./";
 	}
@@ -123,7 +123,7 @@ namespace Base
 		String filename = path(index+1,-1);
 		if(!hasExt) {
 			if((index=filename.rfind('.'))!=String::npos)
-				filename = filename(0,index-1);
+				filename = filename(0,index);
 		}
 		return filename;
 	}
