@@ -218,7 +218,7 @@ namespace Base {
 			}
 
 			bool empty() const {
-				return mInvoker != NULL;
+				return mInvoker == NULL;
 			}
 
 			self_type& operator=(const self_type &rhs) {

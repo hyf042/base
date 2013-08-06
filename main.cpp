@@ -13,7 +13,8 @@ void haha(int a, int b)
 
 int main(void)
 {
-	Base::Function<void(int,int)> tmp = haha;
+	Base::Publisher<void(int,int)> tmp;
+	tmp += haha;
 	tmp(1,2);
 	return 0;
 }

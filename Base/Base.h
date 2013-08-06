@@ -20,5 +20,6 @@
 #include "Thread/Thread.h"
 #include "Function/Function.h"
 #include "Codec/Codec.h"
+#include "Pattern/Publisher.h"
 
 #endif
