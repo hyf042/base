@@ -12,7 +12,7 @@
 
 namespace Base
 {
-	String Logger::DEFAULT_GLOBAL_FILE = "base_log.txt";
+	String Logger::DEFAULT_GLOBAL_FILE = "base.log";
 
 	inline String Logger::logLevelToString(LogLevel level)
 	{
